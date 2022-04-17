@@ -1,14 +1,12 @@
 ---
-title: First Post
-author: Chris
+title: 백엔드 개발자로 진로를 설정하기까지...
+author: Luan
 layout: post
 ---
-Lorem ipsum dolor sit amet, iusto ridens dictas te sed. Error latine vis et. Ex cum munere definitiones, ne quas debitis contentiones cum, epicurei constituam ea sit. Dicant aeterno dolorum ex eum, qui everti iisque consectetuer ea! Duo in falli similique, nec tritani accusam te. Enim sapientem intellegat te pri, nam at atqui accumsan vituperata.
-
-Sed id graeci feugiat. No meis summo consequat vel! Albucius phaedrum omittantur eos an, ex sit lorem possim perpetua. Usu et sumo posidonium, ut qui dicat sapientem tincidunt, et has consul oporteat torquatos! In qui fabulas facilisis, justo nonumes an his, quo vidisse nusquam facilisis no. Eam iriure mediocrem suavitate an?
-
-Quo te solum malorum prompta, porro oblique senserit cum et! Pro wisi cetero periculis ei, nam ullum dicit accusam ne, ad quo apeirian principes dissentiunt. An mea mucius vocent iisque? Vel eu altera consetetur, clita perfecto mea ad. Eos in vero ullum regione, ei veniam disputando pro, nam et iuvaret detracto voluptua.
-
-Ad tritani deleniti sit, ne per ubique habemus singulis. Pro at integre alienum mediocritatem, mea ad libris adipisci necessitatibus, nostro constituam sit te. Recusabo oportere et mea, case minimum deleniti no quo, deseruisse conclusionemque vis te. Nam ex iudicabit constituam accommodare, dicam singulis ex eos! Eu mea viderer ceteros repudiandae, id erat voluptatum mea, ut consul omittam convenire quo. Id justo ipsum mei, modus contentiones per et! At mel omnium lucilius instructior, vel quando graeco in, eos docendi periculis eloquentiam ut.
-
-Eam habemus aliquando ut. Id idque virtute antiopam duo, et idque falli incorrupte eos, in sea omnium instructior. Mei ex nostrud moderatius cotidieque, cu sea partiendo euripidis, eam no tollit doming! Has ne facilisi vulputate, aliquando disputationi mel eu. Ex pri diceret delectus intellegam, regione definiebas pro ex.
+<p>백엔드 개발자로 진로를 설정하기까지...<br>
+나는 대학교를 다니면서 Java, C++, C# 등 기본적인 프로그래밍언어와 운영체제, 소프트웨어공학, 데이터베이스 등 여러가지를 배웠는데 이제 슬슬 졸업할 시기도 찾아오고 
+진로를 정해야 할 시기가 다가왔는데 3학년 마지막 학기에 졸업작품과 캡스톤 프로젝트에 사용할 c#을 소켓프로그램 서버프로그램을 열심히 공부하였고 그에 따라 해왔던것과 비슷한 게임 서버
+개발자를 목표롤 할지 아니면 전부터 관심이 있었던 백엔드 개발자로 목표를 할지 오랜기간 고민을 하다가 내가 앞으로 오래 개발자를 하며 살려면 백엔드 개발자가 더 맞는다고 생각하기에 
+  백엔드 개발자로 진로를 설정하였다.
+ + 추가로 웹 서버 어플리케이션쪽 프로젝트가 많이 없기때문에 다시 공부하면서 프로젝트를 진행할 예정
+</p>
