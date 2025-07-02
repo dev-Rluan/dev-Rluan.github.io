@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>냥이 가챠 🎁</title>
+  <style>
+    /* 🎨 기본 스타일 적용 */
+    body {
+      background: #fff8e7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #6d4c41;
+      letter-spacing: 2px;
+    }
+    .gacha-btn {
+      background: #ffe0b2;
+      color: #6d4c41;
+      border: none;
+      border-radius: 2em;
+      padding: 1em 2.5em;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #e0c9a6;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 2rem;
+    }
+    .gacha-btn:hover {
+      background: #ffd180;
+      transform: scale(1.05);
+    }
+    .result {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #d84315;
+      margin-top: 1.5rem;
+      min-height: 2.5em;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .rarity {
+      font-size: 1.1rem;
+      font-weight: normal;
+      color: #6d4c41;
+      margin-left: 0.5em;
+    }
+    /* 모바일 대응 */
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .gacha-btn { font-size: 1rem; padding: 0.8em 1.5em; }
+      .result { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 🧱 기본 UI 설계 -->
+    <h1>냥이 가챠 🎁</h1>
+    <button class="gacha-btn" id="gachaBtn">냥이 뽑기!</button>
+    <div class="result" id="result"></div>
+  </div>
+  <script>
+    // 🎮 기획: 고양이 목록 및 확률 정의
+    const cats = [
+      { name: '냥이', emoji: '🐱', rarity: '일반', chance: 0.4 },      // 40%
+      { name: '치즈냥이', emoji: '🧀', rarity: '일반', chance: 0.35 }, // 35%
+      { name: '흑냥이', emoji: '🖤', rarity: '드물게', chance: 0.15 }, // 15%
+      { name: '스핑크스', emoji: '😼', rarity: '희귀', chance: 0.08 }, // 8%
+      { name: '전설냥이', emoji: '👑', rarity: '아주 희귀', chance: 0.02 } // 2%
+    ];
+
+    // 누적 확률 배열 생성 (for 랜덤 뽑기)
+    const cumulative = cats.reduce((acc, cat, i) => {
+      acc.push((acc[i-1] || 0) + cat.chance);
+      return acc;
+    }, []);
+
+    // ⚙️ 고양이 뽑기 함수
+    function pickCat() {
+      const rand = Math.random();
+      for (let i = 0; i < cumulative.length; i++) {
+        if (rand < cumulative[i]) return cats[i];
+      }
+      // 혹시 모를 오차 대비
+      return cats[cats.length - 1];
+    }
+
+    // 결과 출력 함수
+    function showResult(cat) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `🎉 당신은 [<b>${cat.name} ${cat.emoji}</b>]를 뽑았습니다! <span class="rarity">(${cat.rarity})</span>`;
+    }
+
+    // 버튼 이벤트 연결
+    document.getElementById('gachaBtn').addEventListener('click', () => {
+      const cat = pickCat();
+      showResult(cat);
+    });
+
+    // 🧪 테스트 함수: 1000번 뽑기 시뮬레이션
+    function testGacha(times = 1000) {
+      const count = {};
+      cats.forEach(cat => count[cat.name] = 0);
+      for (let i = 0; i < times; i++) {
+        const cat = pickCat();
+        count[cat.name]++;
+      }
+      console.log('--- 냥이 가챠 테스트 결과 ---');
+      cats.forEach(cat => {
+        const percent = ((count[cat.name] / times) * 100).toFixed(1);
+        console.log(`${cat.name} ${cat.emoji}: ${count[cat.name]}회 (${percent}%)`);
+      });
+    }
+    // 브라우저 콘솔에서 testGacha() 실행 가능
+    window.testGacha = testGacha;
+
+    /*
+    💡 추가 개선 제안
+    - 고양이별 이미지 추가 (img 태그 활용)
+    - 뽑기 애니메이션(버튼 클릭 시 효과, 결과 등장 애니메이션 등)
+    - 사운드 효과(뽑기, 희귀 고양이 등장 시)
+    - 뽑은 고양이 컬렉션 저장(로컬스토리지 활용)
+    - 뽑기 기록/통계, SNS 공유 기능
+    - 모바일 최적화 및 접근성 개선
+    */
+  </script>
+</body>
+</html> 
