@@ -132,6 +132,7 @@
       justify-content: space-around;
       align-items: flex-start;
       min-height: 300px;
+      padding: 0 2rem;
     }
     
     .vertical-line {
@@ -146,6 +147,7 @@
       height: 2px;
       background: #4a5568;
       transition: background 0.3s;
+      z-index: 5;
     }
     
     .horizontal-line.highlight {
@@ -352,7 +354,7 @@
         board.innerHTML = `
           <div class="ladder-container">
             ${this.players.map((player, index) => `
-              <div style="display: flex; flex-direction: column; align-items: center;">
+              <div class="ladder-column" style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                 <div class="player-name">${player}</div>
                 <div class="vertical-line" style="height: 300px;" data-player="${index}"></div>
                 <div class="result-item">${this.results[index]}</div>
@@ -361,22 +363,38 @@
           </div>
         `;
         
-        // 가로줄 추가
-        this.addHorizontalLines();
+        // 가로줄 추가 (약간의 지연 후 실행)
+        setTimeout(() => this.addHorizontalLines(), 100);
       }
       
       // 가로줄 추가
       addHorizontalLines() {
         const container = document.querySelector('.ladder-container');
-        const verticalLines = container.querySelectorAll('.vertical-line');
+        const columns = container.querySelectorAll('.ladder-column');
         
         for (let row = 0; row < 8; row++) {
           for (let col = 0; col < this.ladder.length - 1; col++) {
             if (this.ladder[col][row] !== undefined) {
               const line = document.createElement('div');
               line.className = 'horizontal-line';
-              line.style.width = '50px';
-              line.style.left = `${col * 100 + 50}px`;
+              
+              // 현재 열과 다음 열의 세로줄 위치 계산
+              const currentColumn = columns[col];
+              const nextColumn = columns[col + 1];
+              const currentLine = currentColumn.querySelector('.vertical-line');
+              const nextLine = nextColumn.querySelector('.vertical-line');
+              
+              const currentRect = currentLine.getBoundingClientRect();
+              const nextRect = nextLine.getBoundingClientRect();
+              const containerRect = container.getBoundingClientRect();
+              
+              // 가로줄 위치와 크기 계산
+              const startX = currentRect.left - containerRect.left + currentRect.width / 2;
+              const endX = nextRect.left - containerRect.left + nextRect.width / 2;
+              const width = endX - startX;
+              
+              line.style.width = `${width}px`;
+              line.style.left = `${startX}px`;
               line.style.top = `${row * 35 + 50}px`;
               line.dataset.row = row;
               line.dataset.col = col;
@@ -441,12 +459,24 @@
               
               // 가로 이동
               const nextCol = this.ladder[currentCol][currentRow];
-              dot.style.left = `${nextCol * 100 + 46}px`;
+              const columns = document.querySelectorAll('.ladder-column');
+              const container = document.querySelector('.ladder-container');
+              const containerRect = container.getBoundingClientRect();
+              const nextLine = columns[nextCol].querySelector('.vertical-line');
+              const nextLineRect = nextLine.getBoundingClientRect();
+              
+              dot.style.left = `${nextLineRect.left - containerRect.left + 3}px`;
               dot.style.top = `${currentRow * 35 + 46}px`;
               currentCol = nextCol;
             } else {
               // 세로 이동
-              dot.style.left = `${currentCol * 100 + 46}px`;
+              const columns = document.querySelectorAll('.ladder-column');
+              const container = document.querySelector('.ladder-container');
+              const containerRect = container.getBoundingClientRect();
+              const currentLine = columns[currentCol].querySelector('.vertical-line');
+              const currentLineRect = currentLine.getBoundingClientRect();
+              
+              dot.style.left = `${currentLineRect.left - containerRect.left + 3}px`;
               dot.style.top = `${currentRow * 35 + 46}px`;
             }
             
