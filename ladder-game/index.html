@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사다리 타기 게임 🎯</title>
+  <style>
+    /* 🎨 기본 스타일 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #4a5568;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+    }
+    
+    /* 입력 폼 스타일 */
+    .input-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f7fafc;
+      border-radius: 0.5rem;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .input-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #4a5568;
+    }
+    
+    .input-group textarea {
+      height: 120px;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    .input-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    /* 버튼 스타일 */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .btn-secondary:hover {
+      background: #cbd5e0;
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* 사다리 보드 스타일 */
+    .ladder-board {
+      position: relative;
+      margin: 2rem 0;
+      min-height: 400px;
+      background: white;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .ladder-container {
+      position: relative;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      min-height: 300px;
+    }
+    
+    .vertical-line {
+      position: relative;
+      width: 2px;
+      background: #4a5568;
+      margin: 0 1rem;
+    }
+    
+    .horizontal-line {
+      position: absolute;
+      height: 2px;
+      background: #4a5568;
+      transition: background 0.3s;
+    }
+    
+    .horizontal-line.highlight {
+      background: #f56565;
+      box-shadow: 0 0 10px #f56565;
+    }
+    
+    .player-name, .result-item {
+      text-align: center;
+      padding: 0.5rem;
+      background: #f7fafc;
+      border-radius: 0.25rem;
+      margin: 0.5rem 0;
+      font-weight: bold;
+      min-width: 80px;
+    }
+    
+    .player-name {
+      color: #2d3748;
+    }
+    
+    .result-item {
+      color: #667eea;
+    }
+    
+    /* 결과 보드 스타일 */
+    .result-board {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f7fafc;
+      border-radius: 0.5rem;
+      border-left: 4px solid #667eea;
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      background: white;
+      border-radius: 0.25rem;
+      border-left: 3px solid #667eea;
+    }
+    
+    .result-player {
+      font-weight: bold;
+      color: #2d3748;
+    }
+    
+    .result-value {
+      color: #667eea;
+      font-weight: bold;
+    }
+    
+    /* 애니메이션 관련 */
+    .moving-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #f56565;
+      border-radius: 50%;
+      z-index: 10;
+      transition: all 0.5s ease;
+    }
+    
+    /* 반응형 */
+    @media (max-width: 768px) {
+      .input-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .ladder-container {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .vertical-line {
+        margin: 0 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>사다리 타기 게임 🎯</h1>
+    
+    <!-- 입력 섹션 -->
+    <div class="input-section">
+      <div class="input-group">
+        <label for="players">참가자 이름 (한 줄에 하나씩)</label>
+        <textarea id="players" placeholder="참가자1&#10;참가자2&#10;참가자3&#10;참가자4"></textarea>
+      </div>
+      <div class="input-group">
+        <label for="results">결과 항목 (한 줄에 하나씩)</label>
+        <textarea id="results" placeholder="상품1&#10;상품2&#10;상품3&#10;상품4"></textarea>
+      </div>
+    </div>
+    
+    <!-- 버튼 그룹 -->
+    <div class="button-group">
+      <button class="btn btn-primary" id="generateBtn">사다리 생성</button>
+      <button class="btn btn-primary" id="startBtn" disabled>시작!</button>
+      <button class="btn btn-secondary" id="resetBtn">리셋</button>
+    </div>
+    
+    <!-- 사다리 보드 -->
+    <div class="ladder-board" id="ladderBoard">
+      <p style="text-align: center; color: #718096;">참가자와 결과를 입력하고 "사다리 생성" 버튼을 눌러주세요!</p>
+    </div>
+    
+    <!-- 결과 보드 -->
+    <div class="result-board" id="resultBoard" style="display: none;">
+      <h3>🎉 결과</h3>
+      <div id="resultList"></div>
+    </div>
+  </div>
+
+  <script>
+    // 🎯 사다리 게임 클래스
+    class LadderGame {
+      constructor() {
+        this.players = [];
+        this.results = [];
+        this.ladder = [];
+        this.gameResults = [];
+        this.isAnimating = false;
+        
+        this.init();
+      }
+      
+      init() {
+        this.bindEvents();
+        this.loadFromStorage();
+      }
+      
+      bindEvents() {
+        document.getElementById('generateBtn').addEventListener('click', () => this.generateLadder());
+        document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+        document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+      }
+      
+      // 입력 데이터 파싱
+      parseInput() {
+        const playersText = document.getElementById('players').value.trim();
+        const resultsText = document.getElementById('results').value.trim();
+        
+        this.players = playersText.split('\n').filter(name => name.trim());
+        this.results = resultsText.split('\n').filter(result => result.trim());
+        
+        return this.players.length > 0 && this.results.length > 0;
+      }
+      
+      // 사다리 생성
+      generateLadder() {
+        if (!this.parseInput()) {
+          alert('참가자와 결과를 모두 입력해주세요!');
+          return;
+        }
+        
+        if (this.players.length !== this.results.length) {
+          alert('참가자 수와 결과 수가 같아야 합니다!');
+          return;
+        }
+        
+        this.createLadderStructure();
+        this.renderLadder();
+        this.saveToStorage();
+        
+        document.getElementById('startBtn').disabled = false;
+      }
+      
+      // 사다리 구조 생성
+      createLadderStructure() {
+        const playerCount = this.players.length;
+        this.ladder = [];
+        
+        // 세로줄 생성
+        for (let i = 0; i < playerCount; i++) {
+          this.ladder[i] = [];
+        }
+        
+        // 가로줄 랜덤 생성
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < playerCount - 1; col++) {
+            if (Math.random() < 0.3) { // 30% 확률로 가로줄 생성
+              this.ladder[col][row] = col + 1;
+              this.ladder[col + 1][row] = col;
+            }
+          }
+        }
+      }
+      
+      // 사다리 렌더링
+      renderLadder() {
+        const board = document.getElementById('ladderBoard');
+        const playerCount = this.players.length;
+        
+        board.innerHTML = `
+          <div class="ladder-container">
+            ${this.players.map((player, index) => `
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="player-name">${player}</div>
+                <div class="vertical-line" style="height: 300px;" data-player="${index}"></div>
+                <div class="result-item">${this.results[index]}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        
+        // 가로줄 추가
+        this.addHorizontalLines();
+      }
+      
+      // 가로줄 추가
+      addHorizontalLines() {
+        const container = document.querySelector('.ladder-container');
+        const verticalLines = container.querySelectorAll('.vertical-line');
+        
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < this.ladder.length - 1; col++) {
+            if (this.ladder[col][row] !== undefined) {
+              const line = document.createElement('div');
+              line.className = 'horizontal-line';
+              line.style.width = '50px';
+              line.style.left = `${col * 100 + 50}px`;
+              line.style.top = `${row * 35 + 50}px`;
+              line.dataset.row = row;
+              line.dataset.col = col;
+              
+              container.appendChild(line);
+            }
+          }
+        }
+      }
+      
+      // 게임 시작
+      async startGame() {
+        if (this.isAnimating) return;
+        
+        this.isAnimating = true;
+        document.getElementById('startBtn').disabled = true;
+        
+        this.gameResults = [];
+        
+        // 각 참가자별로 사다리 타기
+        for (let i = 0; i < this.players.length; i++) {
+          await this.animatePlayer(i);
+        }
+        
+        this.showResults();
+        this.isAnimating = false;
+        document.getElementById('startBtn').disabled = false;
+      }
+      
+      // 참가자 애니메이션
+      async animatePlayer(playerIndex) {
+        return new Promise(resolve => {
+          let currentCol = playerIndex;
+          let currentRow = 0;
+          
+          const dot = document.createElement('div');
+          dot.className = 'moving-dot';
+          document.querySelector('.ladder-container').appendChild(dot);
+          
+          const animate = () => {
+            if (currentRow >= 8) {
+              // 결과 도달
+              this.gameResults.push({
+                player: this.players[playerIndex],
+                result: this.results[currentCol]
+              });
+              
+              dot.remove();
+              resolve();
+              return;
+            }
+            
+            // 현재 위치에 가로줄이 있는지 확인
+            const hasHorizontalLine = this.ladder[currentCol] && this.ladder[currentCol][currentRow] !== undefined;
+            
+            if (hasHorizontalLine) {
+              // 가로줄 하이라이트
+              const horizontalLine = document.querySelector(`[data-row="${currentRow}"][data-col="${currentCol}"]`);
+              if (horizontalLine) {
+                horizontalLine.classList.add('highlight');
+              }
+              
+              // 가로 이동
+              const nextCol = this.ladder[currentCol][currentRow];
+              dot.style.left = `${nextCol * 100 + 46}px`;
+              dot.style.top = `${currentRow * 35 + 46}px`;
+              currentCol = nextCol;
+            } else {
+              // 세로 이동
+              dot.style.left = `${currentCol * 100 + 46}px`;
+              dot.style.top = `${currentRow * 35 + 46}px`;
+            }
+            
+            currentRow++;
+            
+            setTimeout(animate, 500);
+          };
+          
+          animate();
+        });
+      }
+      
+      // 결과 표시
+      showResults() {
+        const resultBoard = document.getElementById('resultBoard');
+        const resultList = document.getElementById('resultList');
+        
+        resultList.innerHTML = this.gameResults.map(result => `
+          <div class="result-item">
+            <span class="result-player">${result.player}</span>
+            <span class="result-value">→ ${result.result}</span>
+          </div>
+        `).join('');
+        
+        resultBoard.style.display = 'block';
+        this.saveResultsToStorage();
+      }
+      
+      // 게임 리셋
+      resetGame() {
+        this.players = [];
+        this.results = [];
+        this.ladder = [];
+        this.gameResults = [];
+        this.isAnimating = false;
+        
+        document.getElementById('players').value = '';
+        document.getElementById('results').value = '';
+        document.getElementById('ladderBoard').innerHTML = '<p style="text-align: center; color: #718096;">참가자와 결과를 입력하고 "사다리 생성" 버튼을 눌러주세요!</p>';
+        document.getElementById('resultBoard').style.display = 'none';
+        document.getElementById('startBtn').disabled = true;
+        
+        this.clearStorage();
+      }
+      
+      // localStorage 관련
+      saveToStorage() {
+        localStorage.setItem('ladderGame', JSON.stringify({
+          players: this.players,
+          results: this.results,
+          ladder: this.ladder
+        }));
+      }
+      
+      loadFromStorage() {
+        const saved = localStorage.getItem('ladderGame');
+        if (saved) {
+          const data = JSON.parse(saved);
+          this.players = data.players || [];
+          this.results = data.results || [];
+          this.ladder = data.ladder || [];
+          
+          if (this.players.length > 0) {
+            document.getElementById('players').value = this.players.join('\n');
+            document.getElementById('results').value = this.results.join('\n');
+            this.renderLadder();
+            document.getElementById('startBtn').disabled = false;
+          }
+        }
+      }
+      
+      saveResultsToStorage() {
+        localStorage.setItem('ladderGameResults', JSON.stringify(this.gameResults));
+      }
+      
+      clearStorage() {
+        localStorage.removeItem('ladderGame');
+        localStorage.removeItem('ladderGameResults');
+      }
+    }
+    
+    // 게임 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      new LadderGame();
+    });
+  </script>
+</body>
+</html> 
