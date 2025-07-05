@@ -345,15 +345,17 @@
         console.log('=== 중복 연결 검사 ===');
         for (let col = 0; col < this.players.length; col++) {
           let connectionCount = 0;
+          let connectedRows = [];
           for (let row = 1; row < 7; row++) {
             if (this.ladder[col][row] !== undefined) {
               connectionCount++;
+              connectedRows.push(row);
             }
           }
           if (connectionCount > 1) {
-            console.error(`⚠️ 세로선 ${col}이 ${connectionCount}번 연결됨!`);
+            console.error(`⚠️ 세로선 ${col}이 ${connectionCount}번 연결됨! (행: ${connectedRows.join(', ')})`);
           } else if (connectionCount === 1) {
-            console.log(`✅ 세로선 ${col}: 정상 (1번 연결)`);
+            console.log(`✅ 세로선 ${col}: 정상 (1번 연결, 행: ${connectedRows[0]})`);
           } else {
             console.log(`ℹ️ 세로선 ${col}: 연결 없음`);
           }
@@ -372,47 +374,22 @@
           this.ladder[i] = [];
         }
         
-        // 각 세로선의 전체 연결 상태를 추적
-        const columnConnections = new Array(playerCount).fill(0);
-        
-        // 가로줄 랜덤 생성 (맨 위/맨 아래 제외, 겹치지 않도록)
-        for (let row = 1; row < 7; row++) { // 1~6행만 사용 (맨 위/맨 아래 제외)
-          const availablePairs = [];
-          
-          // 가능한 연결 쌍들을 찾기
-          for (let col = 0; col < playerCount - 1; col++) {
-            // 현재 세로선이 이미 이 행에서 연결되어 있는지 확인
-            const isCurrentConnectedInThisRow = this.ladder[col][row] !== undefined;
-            
-            // 다음 세로선이 이미 이 행에서 연결되어 있는지 확인
-            const isNextConnectedInThisRow = this.ladder[col + 1][row] !== undefined;
-            
-            // 현재 세로선이 이미 다른 행에서 연결되어 있는지 확인
-            const isCurrentUsedInOtherRows = columnConnections[col] > 0;
-            
-            // 다음 세로선이 이미 다른 행에서 연결되어 있는지 확인
-            const isNextUsedInOtherRows = columnConnections[col + 1] > 0;
-            
-            // 둘 다 현재 행에서 연결되지 않고, 둘 다 다른 행에서도 사용되지 않은 경우만 가능
-            if (!isCurrentConnectedInThisRow && !isNextConnectedInThisRow && 
-                !isCurrentUsedInOtherRows && !isNextUsedInOtherRows) {
-              availablePairs.push(col);
+        // 한 행에서 인접한 가로줄이 겹치지 않게
+        for (let row = 1; row < 7; row++) {
+          let col = 0;
+          while (col < playerCount - 1) {
+            // 왼쪽 세로선이 이미 연결되어 있으면 건너뜀
+            if (col > 0 && this.ladder[col - 1][row] === col) {
+              col++;
+              continue;
             }
-          }
-          
-          // 가능한 연결 쌍들 중에서 랜덤하게 선택
-          if (availablePairs.length > 0) {
-            // 70% 확률로 가로줄 생성
-            if (Math.random() < 0.7) {
-              const randomIndex = Math.floor(Math.random() * availablePairs.length);
-              const col = availablePairs[randomIndex];
-              
+            // 확률적으로 연결
+            if (Math.random() < 0.5) {
               this.ladder[col][row] = col + 1;
               this.ladder[col + 1][row] = col;
-              
-              // 연결 횟수 증가
-              columnConnections[col]++;
-              columnConnections[col + 1]++;
+              col += 2; // 다음 세로선은 건너뜀(겹침 방지)
+            } else {
+              col++;
             }
           }
         }
