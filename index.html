@@ -63,7 +63,8 @@
     }
     /* 뽑기 기록 스타일 */
     .history-section {
-      margin-top: 3rem;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
       text-align: center;
     }
     .history-section h2 {
@@ -74,7 +75,7 @@
     #historyList {
       list-style: none;
       padding: 0;
-      max-height: 300px;
+      max-height: 200px;
       overflow-y: auto;
       border: 2px solid #e0c9a6;
       border-radius: 1rem;
@@ -107,14 +108,15 @@
   <div class="container">
     <!-- 🧱 기본 UI 설계 -->
     <h1>냥이 가챠 🎁</h1>
-    <button class="gacha-btn" id="gachaBtn">냥이 뽑기!</button>
-    <div class="result" id="result"></div>
     
     <!-- 뽑기 기록 영역 -->
     <div class="history-section">
       <h2>뽑기 기록 📝</h2>
       <ul id="historyList"></ul>
     </div>
+    
+    <button class="gacha-btn" id="gachaBtn">냥이 뽑기!</button>
+    <div class="result" id="result"></div>
   </div>
   <script>
     // 🎮 기획: 고양이 목록 및 확률 정의
