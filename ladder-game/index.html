@@ -374,7 +374,7 @@
           this.ladder[i] = [];
         }
         
-        // 한 행에서 인접한 가로줄이 겹치지 않게
+        // 한 행에서 인접한 가로줄이 동시에 연결되지 않도록 구현
         for (let row = 1; row < 7; row++) {
           let col = 0;
           while (col < playerCount - 1) {
@@ -387,7 +387,7 @@
             if (Math.random() < 0.5) {
               this.ladder[col][row] = col + 1;
               this.ladder[col + 1][row] = col;
-              col += 2; // 다음 세로선은 건너뜀(겹침 방지)
+              col += 2; // 인접한 쌍은 건너뜀(겹침 방지)
             } else {
               col++;
             }
