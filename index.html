@@ -61,11 +61,45 @@
       color: #6d4c41;
       margin-left: 0.5em;
     }
+    /* 뽑기 기록 스타일 */
+    .history-section {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    .history-section h2 {
+      color: #6d4c41;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    #historyList {
+      list-style: none;
+      padding: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 2px solid #e0c9a6;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 1rem;
+    }
+    #historyList li {
+      padding: 0.5rem;
+      margin: 0.3rem 0;
+      background: #fff8e7;
+      border-radius: 0.5rem;
+      border-left: 4px solid #ffd180;
+      font-size: 1rem;
+    }
+    #historyList li:first-child {
+      border-left-color: #ff9800;
+      font-weight: bold;
+    }
     /* 모바일 대응 */
     @media (max-width: 600px) {
       h1 { font-size: 2rem; }
       .gacha-btn { font-size: 1rem; padding: 0.8em 1.5em; }
       .result { font-size: 1.3rem; }
+      .history-section h2 { font-size: 1.2rem; }
+      #historyList { max-height: 200px; }
     }
   </style>
 </head>
@@ -75,6 +109,12 @@
     <h1>냥이 가챠 🎁</h1>
     <button class="gacha-btn" id="gachaBtn">냥이 뽑기!</button>
     <div class="result" id="result"></div>
+    
+    <!-- 뽑기 기록 영역 -->
+    <div class="history-section">
+      <h2>뽑기 기록 📝</h2>
+      <ul id="historyList"></ul>
+    </div>
   </div>
   <script>
     // 🎮 기획: 고양이 목록 및 확률 정의
@@ -102,16 +142,44 @@
       return cats[cats.length - 1];
     }
 
+    // localStorage 관련 함수들
+    function saveToHistory(cat) {
+      const history = JSON.parse(localStorage.getItem('catHistory') || '[]');
+      history.unshift(cat.name + ' ' + cat.emoji); // 최신 항목을 맨 앞에 추가
+      localStorage.setItem('catHistory', JSON.stringify(history));
+    }
+
+    function loadHistory() {
+      const history = JSON.parse(localStorage.getItem('catHistory') || '[]');
+      const historyList = document.getElementById('historyList');
+      
+      if (history.length === 0) {
+        historyList.innerHTML = '<li style="color: #999; font-style: italic;">아직 뽑은 고양이가 없어요!</li>';
+        return;
+      }
+      
+      historyList.innerHTML = history.map(cat => `<li>${cat}</li>`).join('');
+    }
+
     // 결과 출력 함수
     function showResult(cat) {
       const resultDiv = document.getElementById('result');
       resultDiv.innerHTML = `🎉 당신은 [<b>${cat.name} ${cat.emoji}</b>]를 뽑았습니다! <span class="rarity">(${cat.rarity})</span>`;
+      
+      // localStorage에 저장하고 UI 업데이트
+      saveToHistory(cat);
+      loadHistory();
     }
 
     // 버튼 이벤트 연결
     document.getElementById('gachaBtn').addEventListener('click', () => {
       const cat = pickCat();
       showResult(cat);
+    });
+
+    // 페이지 로드 시 기록 불러오기
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHistory();
     });
 
     // 🧪 테스트 함수: 1000번 뽑기 시뮬레이션
