@@ -335,12 +335,24 @@
           this.ladder[i] = [];
         }
         
-        // 가로줄 랜덤 생성
-        for (let row = 0; row < 8; row++) {
+        // 가로줄 랜덤 생성 (맨 위/맨 아래 제외, 겹치지 않도록)
+        for (let row = 1; row < 7; row++) { // 1~6행만 사용 (맨 위/맨 아래 제외)
+          const usedColumns = new Set(); // 이미 사용된 열 추적
+          
           for (let col = 0; col < playerCount - 1; col++) {
-            if (Math.random() < 0.3) { // 30% 확률로 가로줄 생성
+            // 이미 사용된 열이면 건너뛰기
+            if (usedColumns.has(col) || usedColumns.has(col + 1)) {
+              continue;
+            }
+            
+            // 30% 확률로 가로줄 생성
+            if (Math.random() < 0.3) {
               this.ladder[col][row] = col + 1;
               this.ladder[col + 1][row] = col;
+              
+              // 사용된 열들을 Set에 추가
+              usedColumns.add(col);
+              usedColumns.add(col + 1);
             }
           }
         }
@@ -372,7 +384,7 @@
         const container = document.querySelector('.ladder-container');
         const columns = container.querySelectorAll('.ladder-column');
         
-        for (let row = 0; row < 8; row++) {
+        for (let row = 1; row < 7; row++) { // 1~6행만 사용
           for (let col = 0; col < this.ladder.length - 1; col++) {
             if (this.ladder[col][row] !== undefined) {
               const line = document.createElement('div');
@@ -395,7 +407,7 @@
               
               line.style.width = `${width}px`;
               line.style.left = `${startX}px`;
-              line.style.top = `${row * 35 + 50}px`;
+              line.style.top = `${row * 35 + 85}px`; // 맨 위 제외하므로 35px 더 아래로
               line.dataset.row = row;
               line.dataset.col = col;
               
@@ -435,7 +447,7 @@
           document.querySelector('.ladder-container').appendChild(dot);
           
           const animate = () => {
-            if (currentRow >= 8) {
+            if (currentRow >= 7) { // 7행까지 (맨 아래 제외)
               // 결과 도달
               this.gameResults.push({
                 player: this.players[playerIndex],
@@ -466,7 +478,7 @@
               const nextLineRect = nextLine.getBoundingClientRect();
               
               dot.style.left = `${nextLineRect.left - containerRect.left + 3}px`;
-              dot.style.top = `${currentRow * 35 + 46}px`;
+              dot.style.top = `${currentRow * 35 + 81}px`; // 맨 위 제외하므로 35px 더 아래로
               currentCol = nextCol;
             } else {
               // 세로 이동
@@ -477,7 +489,7 @@
               const currentLineRect = currentLine.getBoundingClientRect();
               
               dot.style.left = `${currentLineRect.left - containerRect.left + 3}px`;
-              dot.style.top = `${currentRow * 35 + 46}px`;
+              dot.style.top = `${currentRow * 35 + 81}px`; // 맨 위 제외하므로 35px 더 아래로
             }
             
             currentRow++;
