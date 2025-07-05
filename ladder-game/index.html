@@ -337,30 +337,28 @@
         
         // 가로줄 랜덤 생성 (맨 위/맨 아래 제외, 겹치지 않도록)
         for (let row = 1; row < 7; row++) { // 1~6행만 사용 (맨 위/맨 아래 제외)
-          const availableConnections = [];
+          const availablePairs = [];
           
-          // 가능한 연결 조합 찾기
+          // 가능한 연결 쌍들을 찾기
           for (let col = 0; col < playerCount - 1; col++) {
-            // 현재 세로선이 이미 연결되어 있는지 확인
-            const isCurrentConnected = this.ladder[col][row] !== undefined || 
-                                    (col > 0 && this.ladder[col-1][row] !== undefined);
+            // 현재 세로선이 이미 이 행에서 연결되어 있는지 확인
+            const isCurrentConnected = this.ladder[col][row] !== undefined;
             
-            // 다음 세로선이 이미 연결되어 있는지 확인
-            const isNextConnected = this.ladder[col + 1][row] !== undefined || 
-                                  (col + 1 < playerCount - 1 && this.ladder[col + 2][row] !== undefined);
+            // 다음 세로선이 이미 이 행에서 연결되어 있는지 확인
+            const isNextConnected = this.ladder[col + 1][row] !== undefined;
             
             // 둘 다 연결되지 않은 경우만 가능한 연결로 추가
             if (!isCurrentConnected && !isNextConnected) {
-              availableConnections.push(col);
+              availablePairs.push(col);
             }
           }
           
-          // 가능한 연결 중에서 랜덤하게 선택
-          if (availableConnections.length > 0) {
-            // 30% 확률로 가로줄 생성
-            if (Math.random() < 0.3) {
-              const randomIndex = Math.floor(Math.random() * availableConnections.length);
-              const col = availableConnections[randomIndex];
+          // 가능한 연결 쌍들 중에서 랜덤하게 선택
+          if (availablePairs.length > 0) {
+            // 50% 확률로 가로줄 생성
+            if (Math.random() < 0.5) {
+              const randomIndex = Math.floor(Math.random() * availablePairs.length);
+              const col = availablePairs[randomIndex];
               
               this.ladder[col][row] = col + 1;
               this.ladder[col + 1][row] = col;
