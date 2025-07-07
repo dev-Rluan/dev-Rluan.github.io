@@ -488,6 +488,7 @@
         return new Promise(resolve => {
           let currentCol = playerIndex;
           let currentRow = 0;
+          const highlightLines = [];
           
           const dot = document.createElement('div');
           dot.className = 'moving-dot';
@@ -500,22 +501,22 @@
                 player: this.players[playerIndex],
                 result: this.results[currentCol]
               });
-              
               dot.remove();
+
+              // 이전에 하이라이트된 선 원래대로 복구
+              highlightLines.forEach(line => line.classList.remove('highlight'));
               resolve();
               return;
             }
-            
             // 현재 위치에 가로줄이 있는지 확인
             const hasHorizontalLine = this.ladder[currentCol] && this.ladder[currentCol][currentRow] !== undefined;
-            
             if (hasHorizontalLine) {
               // 가로줄 하이라이트
               const horizontalLine = document.querySelector(`[data-row="${currentRow}"][data-col="${currentCol}"]`);
               if (horizontalLine) {
                 horizontalLine.classList.add('highlight');
+                highlightLines.push(horizontalLine);
               }
-              
               // 가로 이동
               const nextCol = this.ladder[currentCol][currentRow];
               const columns = document.querySelectorAll('.ladder-column');
@@ -523,9 +524,8 @@
               const containerRect = container.getBoundingClientRect();
               const nextLine = columns[nextCol].querySelector('.vertical-line');
               const nextLineRect = nextLine.getBoundingClientRect();
-              
               dot.style.left = `${nextLineRect.left - containerRect.left + 3}px`;
-              dot.style.top = `${currentRow * 35 + 81}px`; // 맨 위 제외하므로 35px 더 아래로
+              dot.style.top = `${currentRow * 35 + 81}px`;
               currentCol = nextCol;
             } else {
               // 세로 이동
@@ -534,16 +534,12 @@
               const containerRect = container.getBoundingClientRect();
               const currentLine = columns[currentCol].querySelector('.vertical-line');
               const currentLineRect = currentLine.getBoundingClientRect();
-              
               dot.style.left = `${currentLineRect.left - containerRect.left + 3}px`;
-              dot.style.top = `${currentRow * 35 + 81}px`; // 맨 위 제외하므로 35px 더 아래로
+              dot.style.top = `${currentRow * 35 + 81}px`;
             }
-            
             currentRow++;
-            
             setTimeout(animate, 500);
           };
-          
           animate();
         });
       }
