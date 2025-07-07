@@ -181,7 +181,7 @@
           // drawRoulette로 마지막 상태를 다시 그림
           drawRoulette(players);
           // 당첨자 계산 (화살표가 가리키는 섹터)
-          let theta = angle;
+          let theta = (angle + Math.PI / 2) % (2 * Math.PI); // 12시 방향 기준으로 각도 보정
           let sector = Math.floor((players.length - (theta / (2 * Math.PI)) * players.length)) % players.length;
           if (sector < 0) sector += players.length;
           winnerIndex = sector;
