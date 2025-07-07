@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>룰렛 게임 🎡</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    h1 {
+      text-align: center;
+      color: #4a5568;
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+    .input-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #4a5568;
+    }
+    .input-group textarea {
+      height: 100px;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.5rem;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: #667eea;
+      color: white;
+      transition: all 0.3s;
+      margin-bottom: 1rem;
+    }
+    .btn:hover {
+      background: #5a67d8;
+    }
+    .roulette-board {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem 0;
+      min-height: 340px;
+    }
+    .result-board {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f7fafc;
+      border-radius: 0.5rem;
+      border-left: 4px solid #667eea;
+      text-align: center;
+      font-size: 1.3rem;
+      color: #667eea;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 바 -->
+  <nav style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+    <a href="/ladder-game/index.html" style="font-weight: bold; color: #4a5568; text-decoration: none; font-size: 1.2rem;">사다리 타기</a>
+    <a href="/roulette.html" style="font-weight: bold; color: #667eea; text-decoration: none; font-size: 1.2rem; border-bottom: 2px solid #667eea; padding-bottom: 0.2rem;">룰렛</a>
+  </nav>
+  <div class="container">
+    <h1>룰렛 게임 🎡</h1>
+    <div class="input-group">
+      <label for="roulettePlayers">참가자 이름 (한 줄에 하나씩)</label>
+      <textarea id="roulettePlayers" placeholder="참가자1&#10;참가자2&#10;참가자3"></textarea>
+    </div>
+    <button class="btn" id="spinBtn">룰렛 돌리기</button>
+    <div class="roulette-board">
+      <canvas id="rouletteCanvas" width="320" height="320" style="background: #fff; border-radius: 50%; box-shadow: 0 2px 10px #aaa;"></canvas>
+    </div>
+    <div class="result-board" id="rouletteResult" style="display:none;"></div>
+  </div>
+  <script>
+    // 룰렛 애니메이션 및 랜덤 추첨
+    const canvas = document.getElementById('rouletteCanvas');
+    const ctx = canvas.getContext('2d');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultDiv = document.getElementById('rouletteResult');
+    let players = [];
+    let isSpinning = false;
+    let angle = 0;
+    let spinTimeout;
+    let winnerIndex = null;
+
+    function drawRoulette(names, highlightIdx = null) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = 140;
+      const n = names.length;
+      if (n === 0) {
+        ctx.save();
+        ctx.font = '20px sans-serif';
+        ctx.fillStyle = '#aaa';
+        ctx.textAlign = 'center';
+        ctx.fillText('참가자를 입력하세요', cx, cy);
+        ctx.restore();
+        return;
+      }
+      for (let i = 0; i < n; i++) {
+        const start = angle + (2 * Math.PI * i) / n;
+        const end = angle + (2 * Math.PI * (i + 1)) / n;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, start, end);
+        ctx.closePath();
+        ctx.fillStyle = i % 2 === 0 ? '#667eea' : '#764ba2';
+        if (highlightIdx !== null && i === highlightIdx) ctx.fillStyle = '#f56565';
+        ctx.fill();
+        // 이름
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(start + (end - start) / 2);
+        ctx.textAlign = 'right';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(names[i], radius - 10, 8);
+        ctx.restore();
+      }
+      // 화살표
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.beginPath();
+      ctx.moveTo(0, -radius - 10);
+      ctx.lineTo(-12, -radius - 35);
+      ctx.lineTo(12, -radius - 35);
+      ctx.closePath();
+      ctx.fillStyle = '#f56565';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function spinRoulette() {
+      if (isSpinning) return;
+      const playersText = document.getElementById('roulettePlayers').value.trim();
+      players = playersText.split('\n').filter(name => name.trim());
+      if (players.length === 0) {
+        alert('참가자를 입력해주세요!');
+        return;
+      }
+      isSpinning = true;
+      resultDiv.style.display = 'none';
+      let spinAngle = Math.random() * Math.PI * 6 + Math.PI * 6; // 3~6바퀴 랜덤
+      let current = 0;
+      function animate() {
+        angle += (spinAngle - current) * 0.08;
+        angle %= Math.PI * 2;
+        drawRoulette(players);
+        if (spinAngle - current < 0.01) {
+          // 멈춤
+          isSpinning = false;
+          // 당첨자 계산
+          let idx = players.length - Math.floor(((angle % (2 * Math.PI)) / (2 * Math.PI)) * players.length) - 1;
+          if (idx < 0) idx += players.length;
+          winnerIndex = idx;
+          drawRoulette(players, winnerIndex);
+          resultDiv.innerHTML = `🎉 당첨자: <span style="color:#f56565;">${players[winnerIndex]}</span>`;
+          resultDiv.style.display = 'block';
+          return;
+        }
+        current += (spinAngle - current) * 0.08;
+        spinTimeout = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    spinBtn.addEventListener('click', spinRoulette);
+    document.getElementById('roulettePlayers').addEventListener('input', function() {
+      const playersText = this.value.trim();
+      players = playersText.split('\n').filter(name => name.trim());
+      angle = 0;
+      drawRoulette(players);
+      resultDiv.style.display = 'none';
+    });
+    drawRoulette([]);
+  </script>
+</body>
+</html> 
