@@ -176,8 +176,12 @@
         if (spinAngle - current < 0.01) {
           // 멈춤
           isSpinning = false;
+          // angle을 0~2π로 정규화
+          angle = angle % (2 * Math.PI);
+          // drawRoulette로 마지막 상태를 다시 그림
+          drawRoulette(players);
           // 당첨자 계산 (화살표가 가리키는 섹터)
-          let theta = (angle % (2 * Math.PI));
+          let theta = angle;
           let sector = Math.floor((players.length - (theta / (2 * Math.PI)) * players.length)) % players.length;
           if (sector < 0) sector += players.length;
           winnerIndex = sector;
