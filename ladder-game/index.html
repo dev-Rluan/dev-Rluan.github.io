@@ -430,7 +430,10 @@
         
         for (let row = 1; row < 7; row++) { // 1~6행만 사용
           for (let col = 0; col < this.ladder.length - 1; col++) {
-            if (this.ladder[col][row] !== undefined) {
+            if (
+              this.ladder[col][row] !== undefined &&
+              this.ladder[col][row] === col + 1 // 오른쪽으로만 그리기
+            ) {
               const line = document.createElement('div');
               line.className = 'horizontal-line';
               
