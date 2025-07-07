@@ -124,6 +124,21 @@
         ctx.restore();
         return;
       }
+      // 이름별로 고유 색상 할당 (같은 이름이면 같은 색, 다르면 겹치지 않게)
+      const colorMap = {};
+      let colorIdx = 0;
+      // 충분히 다양한 색상 팔레트 (20개)
+      const palette = [
+        '#667eea', '#764ba2', '#f6d365', '#fda085', '#f56565', '#48bb78', '#4299e1', '#ed64a6', '#ecc94b', '#38b2ac',
+        '#805ad5', '#f687b3', '#fbbf24', '#68d391', '#63b3ed', '#f472b6', '#faf089', '#81e6d9', '#a0aec0', '#cbd5e0'
+      ];
+      for (let i = 0; i < n; i++) {
+        const name = names[i];
+        if (!(name in colorMap)) {
+          colorMap[name] = palette[colorIdx % palette.length];
+          colorIdx++;
+        }
+      }
       for (let i = 0; i < n; i++) {
         const start = angle + (2 * Math.PI * i) / n;
         const end = angle + (2 * Math.PI * (i + 1)) / n;
@@ -131,7 +146,7 @@
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, radius, start, end);
         ctx.closePath();
-        ctx.fillStyle = i % 2 === 0 ? '#667eea' : '#764ba2';
+        ctx.fillStyle = colorMap[names[i]];
         if (highlightIdx !== null && i === highlightIdx) ctx.fillStyle = '#f56565';
         ctx.fill();
         // 이름
