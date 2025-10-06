@@ -32,18 +32,14 @@
 **기간:** 2023.03 ~ 2024.01  
 **기술 스택:** Java, Spring Boot, Oracle, Socket, MyBatis  
 
-<div align="left" style="border:1px solid #e0e0e0; border-radius:12px; padding:16px; margin:10px 0; background-color:#f9f9f9;">
-  
-💡 **요약:**  
+**💡 요약:**  
 신한은행 PG 결제 플랫폼의 승인/정산 코어 로직을 개발하고, VAN사(외부 결제망) 연동 구조를 개선하여 **처리 안정성 및 결제 성공률을 향상**시켰습니다.  
-  
-🔹 **주요 성과**  
+
+**🔹 주요 성과**  
 - 소켓/파일 기반 VAN 연동 구조 개선  
 - 간편결제 카드 등록 로직 설계 및 구현  
 - 거래 데이터 검증 프로세스 자동화 및 오류 복구 로직 추가  
 - 현업·기획팀 협업을 통한 정산 기준 일원화로 정확도 향상  
-
-</div>
 
 ---
 
@@ -51,19 +47,15 @@
 **기간:** 2024.02 ~ 2024.09  
 **기술 스택:** Spring Boot, MSSQL, jQuery, MyBatis  
 
-<div align="left" style="border:1px solid #e0e0e0; border-radius:12px; padding:16px; margin:10px 0; background-color:#f9f9f9;">
-  
-💡 **요약:**  
+**💡 요약:**  
 KB스타플랫폼 결제 백오피스의 정산·리포트 기능을 개선하여  
 **데이터 조회 성능을 최적화**하고, **운영 자동화 수준을 향상**시켰습니다.  
-  
-🔹 **주요 성과**  
+
+**🔹 주요 성과**  
 - SQL 인덱스 및 조건 최적화로 조회 성능 개선  
 - 정산 리포트 조회 시간 단축 및 DB 부하 감소  
 - PM/DBA 협업을 통한 오류 추적 및 관리 기능 강화  
 - 사용자(현업) 중심의 화면 구조 및 API 개선  
-
-</div>
 
 ---
 
@@ -71,19 +63,15 @@ KB스타플랫폼 결제 백오피스의 정산·리포트 기능을 개선하�
 **기간:** 2024.10 ~ 현재  
 **기술 스택:** Spring Boot, PostgreSQL, Batch, SQL  
 
-<div align="left" style="border:1px solid #e0e0e0; border-radius:12px; padding:16px; margin:10px 0; background-color:#f9f9f9;">
-  
-💡 **요약:**  
+**💡 요약:**  
 온누리상품권 시스템의 결제·충전 프로세스를 고도화하여  
 **결제시간 1.5s → 0.05s, 충전시간 2.5s → 1.5s 단축**을 달성했습니다.  
-  
-🔹 **주요 성과**  
+
+**🔹 주요 성과**  
 - SQL 튜닝 및 인덱스 최적화로 DB 부하 40% 감소  
 - 배치 구조 개선 및 비즈니스 로직 분리  
 - Elastic APM 기반 모니터링 도입으로 실시간 장애 추적 가능  
 - 정산 프로세스의 안정성과 일관성 확보  
-
-</div>
 
 ---
 
